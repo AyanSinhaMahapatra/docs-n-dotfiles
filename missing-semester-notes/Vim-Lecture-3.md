@@ -1,4 +1,4 @@
-## Lecture 1
+## Vim - Lecture 3
 
 # Tricks
 
@@ -7,6 +7,12 @@
 2. `^s` freezes and `^q` unfreezes.
 
 3. Open man page for word under the cursor
+
+4. Editing Read Only System Files, after making edits
+
+   `:w !sudo tee %` and select `L` to reload file from disk. And then `:q` to close.
+
+
 
 # Modes 
 

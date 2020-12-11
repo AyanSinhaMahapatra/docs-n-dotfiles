@@ -1,4 +1,28 @@
-## Numpy Basics
+## Numpy Fancy
+
+# Set Display Variables 
+
+1. Maximum Width Columns
+
+`pd.options.display.max_colwidth = 100`
+`pd.set_option('display.max_colwidth', None)` - Multi Line Printing
+
+2. Maximum Rows Shown
+
+`pd.set_option('display.max_rows', 500)`
+
+2. Temporary Setting
+
+```
+from IPython.display import display
+with pd.option_context('display.max_rows', 100, 'display.max_columns', 10):
+    display(df)
+```
+
+3. Reset Option
+
+`pd.reset_option('display.max_rows')`
+`pd.reset_option('all')`
 
 # Tricks
 

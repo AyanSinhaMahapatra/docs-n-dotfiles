@@ -124,6 +124,19 @@
 
 		`data[data.density > 100]`      [Direct maskings are also Row-wise]
 
+	Data Types of all columns
+
+		`df_1.dtypes`
+
+	Memory Usage of a DataFrame
+
+		`appended_data.memory_usage(deep=True)`                            [ Bytes of Space per column ]
+		`print(appended_data.memory_usage(deep=True).sum()/(1024*1024)) `  [ Total Space in MB ]
+
+	Change an Column to an Index
+
+		`df.set_index('sha1', inplace=True)`
+
 3. Index Object
 
 	`ind = pd.Index([2, 3, 5, 7, 11])`       [From scratch]

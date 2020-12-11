@@ -1,4 +1,15 @@
-## Pandas Basics
+## Pandas Fancy
+
+# Contents
+
+1. MultiIndex
+
+
+2. Concat Append
+
+3. Merge Join
+
+4. Vectorized String Operations
 
 # Tricks
 
@@ -23,6 +34,10 @@ class display(object):
         return '\n\n'.join(a + '\n' + repr(eval(a))
                            for a in self.args)
 ```
+
+3. Set dtypes `births['day'] = births['day'].astype(int)`
+
+4. 
 
 # Sections
 
@@ -137,7 +152,7 @@ class display(object):
 
 	Data Aggregations on Multi-Index
 
-		 `data_mean.mean(axis=1, level='type')`     
+		`data_mean.mean(axis=1, level='type')`     
 
 2. Concat and Append
 
@@ -229,17 +244,173 @@ class display(object):
 		`merged.loc[merged['state'].isnull(), 'state/region'].unique()`    [ which regions has state null ]
 		`merged.loc[merged['state/region'] == 'PR', 'state'] = 'Puerto Rico'`  [ Replace states with new abrv ]
 
-4. Aggregation and Grouping
 
-	`ser = pd.Series(rng.rand(5))`
-	`df = pd.DataFrame({'A': rng.rand(5), 'B': rng.rand(5)})`
+4. Vectorized String Operations
+
+	`data = ['peter', 'Paul', None, 'MARY', 'gUIDO']`
+	`names = pd.Series(data)`
+
+	Capitalize all Strings
+
+		`[s.capitalize() for s in data]`      [ Fails at None ]
+		`names.str.capitalize()`              [ Ignores None ]
+
+	Python's Built in String Methods are mirrored in Pandas Vectorized String Methods
+
+		len()		          [ Returns String length ]
+		lower()			
+		translate()		
+		islower()
+		ljust()		
+		upper()			
+		startswith('T')
+		       [ Returns Boolean Values ]	
+		isupper()
+		rjust()		
+		find()			
+		endswith()		
+		isnumeric()
+		center()	
+		rfind()			
+		isalnum()		
+		isdecimal()
+		zfill()		
+		index()			
+		isalpha()		
+		split()                [ Compound Values for each element, i.e. the words ]
+		strip()		
+		rindex()		
+		isdigit()		
+		rsplit()
+		rstrip()	
+		capitalize()	
+		isspace()		
+		partition()
+		lstrip()	
+		swapcase()		
+		istitle()		
+		rpartition()
+
+	All of this are Called like - `pd.str.len()`
+
+	Several Methods that accept Regular Expressions - 
+
+		```
+		match()		Call re.match() on each element, returning a boolean.
+		extract()	Call re.match() on each element, returning matched groups as strings.
+		findall()	Call re.findall() on each element
+		replace()	Replace occurrences of pattern with some other string
+		contains()	Call re.search() on each element, returning a boolean
+		count()		Count occurrences of pattern
+		split()		Equivalent to str.split(), but accepts regexps
+		rsplit()	Equivalent to str.rsplit(), but accepts regexps
+		```
+
+	Miscellaneous
+
+		```
+		get()			Index each element
+		slice()			Slice each element
+		slice_replace()	Replace slice in each element with passed value
+		cat()			Concatenate strings
+		repeat()		Repeat values
+		normalize()		Return Unicode form of string
+		pad()			Add whitespace to left, right, or both sides of strings
+		wrap()			Split long strings into lines with length less than a given width
+		join()			Join strings in each element of the Series with passed separator
+		get_dummies()	extract dummy variables as a dataframe
+		```
+
+	Pythonic Slicing and Indexing
+
+		`df.str.slice(0, 3)` -> `df.str[0:3]`    [ Slices every string ]
+		`df.str.get(i)`      -> `df.str[i]`      [ Gives out every i'th char ]
+
+	These `get()` and `slice()` methods also let you access elements of arrays returned by `split()`.
+
+		`monte.str.split().str.get(-1)`
+
+	Indicators
+
+		`full_monte = pd.DataFrame({'name': monte,'info': ['B|C|D', 'B|D', 'A|C','B|D', 'B|C', 'B|C|D']})`
+		`full_monte['info'].str.get_dummies('|')`       [ This can be any character ]
+
+		This gives a dataframe with 4 Columns A,B,C,D and only 0/1 Values on whther they were present.
+
+	Uses Examples
+
+		`recipes.ingredients.str.len().describe()`                 [ Aggregations on String Length ]
+		`recipes.name[np.argmax(recipes.ingredients.str.len())]`   [ Longest Recipe ]
+		`recipes.description.str.contains('[Bb]reakfast').sum()`   [ How many recipes mentions Breakfast ]
+
+		```
+		spice_list = ['salt', 'pepper', 'oregano', 'sage', 'parsley', 'rosemary',
+		                                                        'tarragon', 'thyme', 'paprika', 'cumin']
+		spice_df = pd.DataFrame(dict((spice, recipes.ingredients.str.contains(spice, re.IGNORECASE))
+                                                                for spice in spice_list))
+        ```
+
+        Here `re.IGNORECASE` makes the search case insensitive. `spice_df` is a Boolean Dataframe.
+
+        `selection = spice_df.query('parsley & paprika & tarragon')`
+        `recipes.name[selection.index]`
+
+
+5. Time Series
+
+	Python DateTime
+
+		`from datetime import datetime`  `datetime(year=2015, month=7, day=4)`
+		`from dateutil import parser`    `parser.parse("4th of July, 2015")`
+
+	Numpy `datetime64`
+
+		`date = np.array('2015-07-04', dtype=np.datetime64)`
+		`np.datetime64('2015-07-04 12:59:59.50', 'ns')`
+
+	Pandas DateTime
+
+		`date = pd.to_datetime("4th of July, 2015")`
+
+	Pandas DateTime Functions
+
+		`date.strftime('%A')`                          [ What day is it ]
+		`date + pd.to_timedelta(np.arange(12), 'D')`   [ Vectorized Operations ]
+
+	Indexing by Time
 	
-	For Series, aggregations give a value: `ser.sum()` and `ser.mean()`.
+		`index = pd.DatetimeIndex(['2014-07-04', '2014-08-04', '2015-07-04', '2015-08-04'])`
+		`data = pd.Series([0, 1, 2, 3], index=index)`
+		`data['2014-07-04':'2015-07-04']`
+		`data['2014']`
 
-	For DataFramaes, by **Default** the aggregates returns results by each **Column**: 
+	TimeSeries Data Structures in Pandas
 
-		`df,mean()`                     [ Gives two values for A and B ]
+	- For time stamps, Pandas provides the `Timestamp` type. As mentioned before, it is essentially a replacement for
+	  Python's native datetime, but is based on the more efficient `numpy.datetime64` data type. The associated Index
+	  structure is `DatetimeIndex`.
 
-	For giving results Row-wise, we have to do 
+	- For time Periods, Pandas provides the `Period` type. This encodes a fixed-frequency interval based on `numpy.datetime64`.
+	  The associated index structure is `PeriodIndex`.
+	
+	- For time deltas or durations, Pandas provides the `Timedelta` type. `Timedelta` is a more efficient replacement for
+	  Python's native `datetime.timedelta` type, and is based on `numpy.timedelta64`. The associated index structure
+	  is `TimedeltaIndex`.
 
-		`df.mean(axis='columns')`       [  ]
+	`Timestamp` and `DatetimeIndex`
+
+		Parsing all formats
+
+			`dates = pd.to_datetime([datetime(2015, 7, 3), '4th of July, 2015', '2015-Jul-6', '07-07-2015', '20150708'])`
+
+		`pd.date_range('2015-07-03', '2015-07-10')`
+		`pd.date_range('2015-07-03', periods=8, freq='H')`
+		`pd.period_range('2015-07', periods=8, freq='M')`
+
+	Converting `DatetimeIndex` can be converted to a `PeriodIndex`
+
+		`dates.to_period('D')`
+
+	Creating `TimedeltaIndex`
+
+		`dates - dates[0]`

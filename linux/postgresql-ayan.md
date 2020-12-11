@@ -14,11 +14,19 @@
 
 6. `\dt`          - Lists all Tables
 
-7. `psql -d ayandb -U ayan`  - Gets into Database ayandb under user ayan, doesn't have to specify user, if OS User by same name.
+7. `psql -d ayandb -U ayan`  
 
-8. `pg_restore -U postgres -d dvdrental /path_to/dvdrental.tar` - Restores Database from a tar file. [ Has to create database under the user first ]
+	- Gets into Database ayandb under user ayan, doesn't have to specify user, if OS User by same name.
 
-9. `CREATE DATABASE ayandb;` and `GRANT ALL PRIVILAGES ON DATABASE ayandb to ayan;` - Makes it possible to connect to pgAdmin/psql/wrappers.
+8. `pg_restore -U postgres -d dvdrental /path_to/dvdrental.tar` 
+
+	- Restores Database from a tar file. [ Has to create database under the user first ]
+
+9. `CREATE DATABASE ayandb;` and `GRANT ALL PRIVILAGES ON DATABASE ayandb to ayan;` 
+
+	- Makes it possible to connect to pgAdmin/psql/wrappers.
+
+10. `\password postgres`  - Set password of user postgres (to connect to pgAdmin)
 
 # SQL Commands
 
